@@ -23,40 +23,68 @@ namespace MyLauncher.Modules
         private static readonly HttpClient _http = new HttpClient();
         private const string BaseUrl = "https://api.modrinth.com/v2";
 
+        // 中文映射数据的下载地址（GitHub Release）
+        private const string NameMapUrl =
+            "https://github.com/W-DDA/RFLR/releases/download/v1.0-data/modname_map.json";
+
         private static Dictionary<string, string>? _nameMap;
 
-        private static Dictionary<string, string> GetNameMap()
+        /// <summary>
+        /// 获取中文映射表。优先读本地，本地没有就从 GitHub Release 下载。
+        /// </summary>
+        private static async Task<Dictionary<string, string>> GetNameMapAsync()
         {
             if (_nameMap != null) return _nameMap;
 
             _nameMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            try
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "modname_map.json");
+
+            // 1. 本地已有，直接读
+            if (File.Exists(path))
             {
-                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "modname_map.json");
-                Console.WriteLine($"[Modrinth] 映射表路径: {path}");
-                if (File.Exists(path))
+                try
                 {
                     var json = File.ReadAllText(path);
                     var dict = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
                     if (dict != null)
                     {
-                        foreach (var kv in dict)
-                            _nameMap[kv.Key] = kv.Value;
+                        foreach (var kv in dict) _nameMap[kv.Key] = kv.Value;
                     }
-                    Console.WriteLine($"[Modrinth] 映射表加载成功，共 {_nameMap.Count} 条");
+                    Console.WriteLine($"[Modrinth] 本地映射表加载成功，共 {_nameMap.Count} 条");
+                    return _nameMap;
                 }
-                else
+                catch
                 {
-                    Console.WriteLine($"[Modrinth] 映射表不存在");
+                    // 本地读取失败，继续尝试下载
                 }
+            }
+
+            // 2. 本地没有或读取失败，从 GitHub Release 下载
+            try
+            {
+                Console.WriteLine("[Modrinth] 本地无数据，正在从服务器下载中文映射表...");
+                var bytes = await _http.GetByteArrayAsync(NameMapUrl);
+                await File.WriteAllBytesAsync(path, bytes);
+
+                var json = File.ReadAllText(path);
+                var dict = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                if (dict != null)
+                {
+                    foreach (var kv in dict) _nameMap[kv.Key] = kv.Value;
+                }
+                Console.WriteLine($"[Modrinth] 下载完成，加载 {_nameMap.Count} 条映射");
             }
             catch (Exception e)
             {
-                Console.WriteLine($"[Modrinth] 映射表读取失败: {e.Message}");
+                Console.WriteLine($"[Modrinth] 下载失败: {e.Message}");
             }
+
             return _nameMap;
         }
 
+        /// <summary>
+        /// 中文关键词翻译成英文。
+        /// </summary>
         private static async Task<string> TranslateQueryAsync(string query)
         {
             if (!Regex.IsMatch(query, @"[\u4e00-\u9fff]"))
@@ -65,7 +93,8 @@ namespace MyLauncher.Modules
                 return query;
             }
 
-            var map = GetNameMap();
+            var map = await GetNameMapAsync();
+
             if (map.TryGetValue(query.Trim(), out var english))
             {
                 Console.WriteLine($"[Modrinth] 精确匹配: {query} -> {english}");
