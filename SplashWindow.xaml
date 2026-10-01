@@ -1,0 +1,67 @@
+<Window x:Class="MyLauncher.SplashWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="赤狐启动器" Height="340" Width="440"
+        WindowStyle="None" AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="False"
+        Topmost="True">
+
+    <Border Background="#E61E1E28" CornerRadius="16">
+        <Grid>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                <!-- Logo -->
+                <Image x:Name="LogoImage"
+                       Source="logo.png"
+                       Width="110" Height="110"
+                       RenderTransformOrigin="0.5,0.5">
+                    <Image.RenderTransform>
+                        <ScaleTransform x:Name="LogoScale" ScaleX="0.5" ScaleY="0.5"/>
+                    </Image.RenderTransform>
+                </Image>
+
+                <!-- 启动器名称 -->
+                <TextBlock x:Name="TitleText"
+                           Text="赤狐启动器"
+                           Foreground="#FFFFFF"
+                           FontSize="22"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           Margin="0,18,0,0"
+                           Opacity="0"/>
+
+                <!-- 缩写 -->
+                <TextBlock x:Name="AbbrText"
+                           Text="RFLR"
+                           Foreground="#E87A3C"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           Margin="0,4,0,0"
+                           Opacity="0"/>
+
+                <!-- 副标题 -->
+                <TextBlock x:Name="StatusText"
+                           Text="正在启动..."
+                           Foreground="#A0A0B0"
+                           FontSize="13"
+                           HorizontalAlignment="Center"
+                           Margin="0,14,0,0"
+                           Opacity="0"/>
+
+                <!-- 进度条 -->
+                <ProgressBar x:Name="LoadProgress"
+                             Width="220" Height="4"
+                             Minimum="0" Maximum="100"
+                             Value="0"
+                             Margin="0,22,0,0"
+                             Background="#33FFFFFF"
+                             Foreground="#E87A3C"
+                             BorderThickness="0"
+                             Opacity="0"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

@@ -1,0 +1,10 @@
+# 构建产物
+bin/
+obj/
+
+# 你的私有数据库（核心！）
+modname_map.json
+
+# 日志和用户配置
+*.log
+debug.log

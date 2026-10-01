@@ -1,0 +1,32 @@
+<UserControl x:Class="MyLauncher.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Foreground="#E0E0E0">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
+            <TextBlock Text="游戏目录:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <TextBox x:Name="GameDirBox" Width="380" Height="30" IsReadOnly="True"/>
+            <Button Content="浏览" Width="60" Height="30" Margin="8,0,0,0"
+                    Click="Browse_Click"/>
+            <Button Content="保存" Width="60" Height="30" Margin="8,0,0,0"
+                    Click="Save_Click"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="1"
+                   Text="更改目录后需要重启启动器才能生效。"
+                   Foreground="#9090A0" FontSize="12" Margin="0,0,0,12"/>
+
+        <TextBox Grid.Row="2" x:Name="LogBox"
+                 IsReadOnly="True" AcceptsReturn="True"
+                 VerticalScrollBarVisibility="Auto"
+                 Background="#40000000" Foreground="#C0C0D0"
+                 BorderThickness="0" Padding="8"
+                 FontFamily="Consolas" FontSize="12"/>
+    </Grid>
+</UserControl>
